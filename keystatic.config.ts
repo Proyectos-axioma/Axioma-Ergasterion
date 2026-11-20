@@ -1,5 +1,5 @@
 import { config, fields, collection } from '@keystatic/core';
-import { GITHUB_REPO } from './src/consts';
+import { GITHUB_REPO, SITE_PROPIETARIO } from './src/consts';
 const isProd = import.meta.env.PROD;
 
 export default config({
@@ -80,7 +80,7 @@ export default config({
                     publicPath: '../../assets/blog/'
                 }),
             
-                author: fields.text({ label: 'Autor', defaultValue: 'Equipo Axioma' }),
+                author: fields.text({ label: 'Autor', defaultValue: SITE_PROPIETARIO }),
                 categoria: fields.text({ label: 'Categoría' }),
             
                 tags: fields.array(

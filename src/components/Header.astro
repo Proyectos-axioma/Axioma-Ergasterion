@@ -18,16 +18,18 @@ import { Icon } from 'astro-icon/components';
                 <div class="drawer-side">
                     <label for="my-drawer-5" aria-label="close sidebar" class="drawer-overlay"></label>
 <!--Opciones del drawer -->
-                    <ul class="menu bg-base-200 min-h-full w-80 p-4 text-xl">
-                        <div class="my-6 flex w-full font-semibold gap-2 items-center">
+                    <aside class="bg-base-200 min-h-full w-80 p-4 text-xl">
+                        <div class="my-6 flex w-full font-semibold gap-2 items-center px-3">
                             <Icon name="tabler:briefcase" class="w-6 h-6 stroke-2" /> {SITE_TITLE}
                         </div>
-                        <li><HeaderLink href="/">Inicio</HeaderLink></li>
-                        <li><HeaderLink href="/proyectos">Proyectos</HeaderLink></li>
-                        <li><HeaderLink href="/#sobre-mi">Sobre mí</HeaderLink></li>
-                        <li><HeaderLink href="/blog">Blog</HeaderLink></li>
-                        <li><HeaderLink href="/#contacto">Contacto</HeaderLink></li>
-                    </ul>
+                        <ul class="menu w-full p-0 text-xl">
+                            <li><HeaderLink href="/">Inicio</HeaderLink></li>
+                            <li><HeaderLink href="/proyectos">Proyectos</HeaderLink></li>
+                            <li><HeaderLink href="/#sobre-mi">Sobre mí</HeaderLink></li>
+                            <li><HeaderLink href="/blog">Blog</HeaderLink></li>
+                            <li><HeaderLink href="/#contacto">Contacto</HeaderLink></li>
+                        </ul>
+                    </aside>
                 </div>
             </div>
 <!-- Logo y nombre del sitio -->

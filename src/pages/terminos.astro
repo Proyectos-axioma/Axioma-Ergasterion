@@ -2,42 +2,49 @@
 import Layout from '../layouts/Layout.astro';
 import { SITE_TITLE } from '../consts';
 ---
-<Layout title={`Términos y Condiciones | ${SITE_TITLE}`} description="Términos de servicio y políticas de uso de nuestra tienda.">
+<Layout title={`Términos y Condiciones | ${SITE_TITLE}`} description="Términos de servicio, propiedad intelectual y políticas de contratación de proyectos.">
     <main class="container mx-auto px-4 py-12">
         <article class="prose prose-base md:prose-lg max-w-4xl mx-auto bg-base-100 p-8 md:p-16 rounded-3xl shadow-xl border border-base-200">
             <div class="text-center mb-10">
                 <h1 class="mb-2">Términos y Condiciones</h1>
                 <p class="text-sm opacity-60 mt-0">Última actualización: Noviembre 2026</p>
             </div>
+
             <h2>1. Información General</h2>
             <p>
-                Bienvenido a <strong>{SITE_TITLE}</strong>. Los presentes Términos y Condiciones regulan el uso de nuestro sitio web y la adquisición de productos a través del mismo. Al acceder a esta plataforma, aceptas estar sujeto a estas políticas. Te recomendamos leerlas detenidamente antes de realizar cualquier compra.
+                Bienvenido a <strong>{SITE_TITLE}</strong>. Los presentes Términos y Condiciones regulan el acceso y uso de nuestro sitio web y portafolio digital, así como los lineamientos generales aplicables a la solicitud de presupuestos y contratación de servicios profesionales. Al navegar en esta plataforma, aceptas estar sujeto a estas políticas.
             </p>
-            <h2>2. Productos y Disponibilidad</h2>
+
+            <h2>2. Servicios y Propuestas de Proyecto</h2>
             <p>
-                Nos esforzamos por mostrar con la mayor precisión posible los colores, características y detalles de nuestros productos. Sin embargo, no podemos garantizar que la pantalla de tu dispositivo muestre los colores de manera exacta. Todos los pedidos están sujetos a disponibilidad de inventario.
+                Los casos de estudio, proyectos y muestras exhibidos en este portafolio tienen fines informativos y demostrativos sobre nuestras capacidades técnicas y creativas. Toda cotización o propuesta formal de trabajo se define de manera personalizada según los requerimientos específicos de cada cliente y tendrá la vigencia indicada en el documento de alcance correspondiente.
             </p>
-            <h2>3. Precios y Pagos</h2>
+
+            <h2>3. Condiciones de Contratación y Pagos</h2>
             <ul>
-                <li>Todos los precios mostrados incluyen el impuesto correspondiente (IVA), salvo indicación contraria.</li>
-                <li>Los gastos de envío se calcularán y mostrarán al momento de finalizar la compra.</li>
-                <li>Nos reservamos el derecho de modificar los precios en cualquier momento sin previo aviso.</li>
+                <li>El inicio de cualquier proyecto requiere la aprobación formal del alcance y el pago de un anticipo acordado (habitualmente del <strong>[50%]</strong> del total presupuestado).</li>
+                <li>El monto restante se liquidará contra entrega de los hitos acordados o previo al despliegue y entrega final de los archivos editables o accesos de producción.</li>
+                <li>Cualquier requerimiento adicional fuera del alcance inicial aprobado será cotizado y calendarizado por separado.</li>
             </ul>
-            <h2>4. Políticas de Envío</h2>
+
+            <h2>4. Plazos de Entrega y Revisiones</h2>
             <p>
-                Los pedidos son procesados en un plazo de <strong>[1 a 3 días hábiles]</strong>. Los tiempos de tránsito dependen de la paquetería seleccionada y la zona de entrega. No nos hacemos responsables por demoras causadas por terceros o situaciones de fuerza mayor.
+                Los tiempos de desarrollo y ejecución se establecen en el cronograma de cada proyecto y comienzan a correr una vez recibidos el anticipo y todos los insumos necesarios por parte del cliente (textos, recursos gráficos o accesos). Cada etapa incluye un número definido de rondas de revisión (<strong>[2 a 3 rondas]</strong>) para garantizar que el resultado cumpla con los objetivos planteados.
             </p>
-            <h2>5. Cambios y Devoluciones</h2>
+
+            <h2>5. Propiedad Intelectual y Derechos de Uso</h2>
             <p>
-                Aceptamos devoluciones dentro de los <strong>[15 días naturales]</strong> posteriores a la recepción del pedido, siempre y cuando el producto se encuentre en sus condiciones originales, sin uso y con sus etiquetas y empaques originales. Los gastos de envío por devolución corren a cargo del comprador.
+                Todo el contenido propio de este sitio web —incluyendo diseño, código, textos, logotipos y material gráfico— es propiedad intelectual de <strong>{SITE_TITLE}</strong> o se utiliza bajo autorización de sus respectivos titulares para fines de portafolio. Una vez liquidado el pago total de un servicio contratado, el cliente recibe los derechos de uso y explotación sobre los entregables finales acordados, reservándonos el derecho de mostrar el trabajo realizado en nuestro portafolio salvo acuerdo de confidencialidad (NDA) previo.
             </p>
-            <h2>6. Propiedad Intelectual</h2>
+
+            <h2>6. Confidencialidad y Privacidad</h2>
             <p>
-                Todo el contenido incluido en este sitio, como textos, gráficos, logotipos e imágenes, es propiedad de <strong>{SITE_TITLE}</strong> o de sus proveedores de contenido, y está protegido por las leyes de propiedad intelectual internacionales.
+                Toda información proporcionada a través de nuestros canales de contacto o durante el desarrollo de un proyecto será tratada de manera estrictamente confidencial y utilizada únicamente para la comunicación, evaluación y ejecución de los servicios solicitados.
             </p>
+
             <div class="divider mt-12"></div>
             <p class="text-sm opacity-70 text-center italic">
-                *Nota para la plantilla: Este es un texto de ejemplo. El propietario de la tienda debe sustituir esta información con las políticas legales correspondientes a su país y modelo de negocio.
+                *Nota para la plantilla: Este es un texto base para portafolios y estudios profesionales. El propietario debe adaptar estas cláusulas a la legislación de su país y a su modalidad de trabajo.
             </p>
         </article>
     </main>
