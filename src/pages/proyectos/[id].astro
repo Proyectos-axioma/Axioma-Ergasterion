@@ -1,0 +1,195 @@
+---
+// Página de detalle de cada proyecto del portfolio
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import type { CollectionEntry } from 'astro:content';
+import { SITE_TITLE } from '../../consts';
+import ProyectosRelacionados from '../../components/ProyectosRelacionados.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+    const proyectos = await getCollection('proyectos');
+    return proyectos.map((proyecto: CollectionEntry<'proyectos'>) => ({
+        params: { id: proyecto.id },
+        props: { proyecto },
+    }));
+}
+
+const { proyecto } = Astro.props;
+const { Content } = await render(proyecto);
+---
+<Layout title={`${proyecto.data.nombre} | ${SITE_TITLE}`} description={proyecto.data.descripcion} image={proyecto.data.imagenPrincipal}>
+    <main class="container mx-auto p-4 py-8">
+        <div class="text-sm breadcrumbs mb-8">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/proyectos">Proyectos</a></li>
+                <li>{proyecto.data.nombre}</li>
+            </ul>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <!-- Columna Izquierda: Galería Interactiva -->
+            <div class="flex flex-col gap-4">
+                <Image
+                    id="imagen-principal"
+                    src={proyecto.data.imagenPrincipal}
+                    alt={proyecto.data.nombre}
+                    class="rounded-2xl shadow-xl w-full object-cover aspect-video md:aspect-square transition-opacity duration-300"
+                />
+                <!-- Galería de miniaturas -->
+                {proyecto.data.imagenesSecundarias && proyecto.data.imagenesSecundarias.length > 0 && (
+                    <div class="flex gap-2 overflow-x-auto pb-2" id="galeria-miniaturas">
+                        <!-- La foto principal como primera miniatura (activa por defecto) -->
+                        <button class="miniatura-btn border-2 border-primary rounded-lg overflow-hidden flex-shrink-0 opacity-100 cursor-pointer">
+                            <Image
+                                src={proyecto.data.imagenPrincipal}
+                                alt="Miniatura principal"
+                                class="w-20 h-20 sm:w-24 sm:h-24 object-cover"
+                            />
+                        </button>
+                        <!-- El resto de las fotos secundarias -->
+                        {proyecto.data.imagenesSecundarias.map((img: any, index: number) => (
+                            <button class="miniatura-btn border-2 border-transparent rounded-lg overflow-hidden flex-shrink-0 opacity-60 hover:opacity-100 transition-all cursor-pointer">
+                                <Image
+                                    src={img}
+                                    alt={`Vista ${index + 2} de ${proyecto.data.nombre}`}
+                                    class="w-20 h-20 sm:w-24 sm:h-24 object-cover"
+                                />
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <!-- Columna Derecha: Información del Proyecto -->
+            <div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {proyecto.data.destacado && (
+                        <span class="badge badge-accent badge-lg">Destacado</span>
+                    )}
+                    {proyecto.data.categorias.map((cat: string) => (
+                        <a href={`/proyectos?categoria=${encodeURIComponent(cat)}`} class="badge badge-lg badge-primary">{cat}</a>
+                    ))}
+                </div>
+
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">{proyecto.data.nombre}</h1>
+
+                <!-- Metadatos opcionales (Cliente y Fecha) -->
+                {(proyecto.data.cliente || proyecto.data.fecha) && (
+                    <div class="flex flex-wrap gap-6 text-sm text-base-content/70 mb-6 bg-base-200/60 p-4 rounded-xl">
+                        {proyecto.data.cliente && (
+                            <div class="flex items-center gap-2">
+                                <Icon name="tabler:user-check" class="w-5 h-5 text-primary" />
+                                <span><strong>Cliente / Contexto:</strong> {proyecto.data.cliente}</span>
+                            </div>
+                        )}
+                        {proyecto.data.fecha && (
+                            <div class="flex items-center gap-2">
+                                <Icon name="tabler:calendar" class="w-5 h-5 text-primary" />
+                                <span><strong>Fecha:</strong> <FormattedDate date={proyecto.data.fecha} /></span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <p class="text-lg text-base-content/80 mb-6 leading-relaxed">
+                    {proyecto.data.descripcion}
+                </p>
+
+                <!-- Herramientas / Tecnologías / Disciplinas -->
+                {proyecto.data.herramientas && proyecto.data.herramientas.length > 0 && (
+                    <div class="mb-8">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-base-content/60 mb-3">
+                            Herramientas y Tecnologías
+                        </h2>
+                        <div class="flex flex-wrap gap-2">
+                            {proyecto.data.herramientas.map((herramienta: string) => (
+                                <a
+                                    href={`/proyectos?herramienta=${encodeURIComponent(herramienta)}`}
+                                    class="badge badge-outline badge-lg hover:badge-secondary transition-colors"
+                                >
+                                    {herramienta}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <!-- Botones de Acción: Demo y Código Fuente -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                    {proyecto.data.urlDemo ? (
+                        <a
+                            href={proyecto.data.urlDemo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-primary btn-lg flex-1 shadow-lg hover:shadow-primary/40 transition-shadow"
+                        >
+                            <Icon name="tabler:external-link" class="w-6 h-6" />
+                            Ver Demo / Proyecto
+                        </a>
+                    ) : (
+                        <button class="btn btn-disabled btn-lg flex-1" disabled>
+                            <Icon name="tabler:external-link-off" class="w-6 h-6" />
+                            Demo no disponible
+                        </button>
+                    )}
+
+                    {proyecto.data.urlCodigo ? (
+                        <a
+                            href={proyecto.data.urlCodigo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-outline btn-lg flex-1"
+                        >
+                            <Icon name="tabler:brand-github" class="w-6 h-6" />
+                            Código Fuente
+                        </a>
+                    ) : (
+                        <button class="btn btn-disabled btn-lg flex-1" disabled>
+                            <Icon name="tabler:code-off" class="w-6 h-6" />
+                            Código privado / N/A
+                        </button>
+                    )}
+                </div>
+
+                <div class="divider">Acerca del proyecto</div>
+                <article class="prose prose-base sm:prose-lg text-base-content max-w-none">
+                    <Content />
+                </article>
+            </div>
+        </div>
+
+        <ProyectosRelacionados
+            categoriasActuales={proyecto.data.categorias}
+            herramientasActuales={proyecto.data.herramientas}
+            idActual={proyecto.id}
+        />
+    </main>
+</Layout>
+<!-- Script para la galería interactiva -->
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+        const imagenPrincipal = document.getElementById('imagen-principal');
+        const botonesMiniatura = document.querySelectorAll('.miniatura-btn');
+        if (imagenPrincipal && botonesMiniatura.length > 0) {
+            botonesMiniatura.forEach(boton => {
+                boton.addEventListener('click', function() {
+                    const imgAdentro = this.querySelector('img');
+                    if (imgAdentro) {
+                        imagenPrincipal.src = imgAdentro.src;
+                        imagenPrincipal.srcset = imgAdentro.srcset;
+                        botonesMiniatura.forEach(b => {
+                            b.classList.remove('border-primary', 'opacity-100');
+                            b.classList.add('border-transparent', 'opacity-60');
+                        });
+                        this.classList.remove('border-transparent', 'opacity-60');
+                        this.classList.add('border-primary', 'opacity-100');
+                    }
+                });
+            });
+        }
+    });
+</script>

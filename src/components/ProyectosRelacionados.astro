@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import ProyectoCard from './ProyectoCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+    categoriasActuales: string[];
+    herramientasActuales?: string[];
+    idActual: string;
+}
+
+const { categoriasActuales, herramientasActuales = [], idActual } = Astro.props;
+const proyectos = await getCollection('proyectos');
+
+// Filtramos los proyectos relacionados por categoría o herramienta/disciplina
+const relacionados = proyectos.filter((proyecto: CollectionEntry<'proyectos'>) => {
+    if (proyecto.id === idActual) return false;
+    const coincideCategoria = proyecto.data.categorias.some(cat => categoriasActuales.includes(cat));
+    const coincideHerramienta = proyecto.data.herramientas?.some(h => herramientasActuales.includes(h));
+    return coincideCategoria || coincideHerramienta;
+});
+
+// Mezclamos al azar y tomamos solo los primeros 4
+const relacionadosAleatorios = relacionados.sort(() => 0.5 - Math.random()).slice(0, 4);
+---
+{relacionadosAleatorios.length > 0 && (
+    <section class="mt-12 md:mt-20 border-t border-base-300 pt-8 md:pt-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 px-4 md:px-0">Otros proyectos relacionados</h2>
+        <div class="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory px-4 md:px-0 pb-8 no-scrollbar">
+            {relacionadosAleatorios.map((proyecto: CollectionEntry<'proyectos'>) => (
+                <div class="w-72 md:w-auto flex-shrink-0 snap-start">
+                    <ProyectoCard
+                        titulo={proyecto.data.nombre}
+                        descripcion={proyecto.data.descripcion}
+                        imagen={proyecto.data.imagenPrincipal}
+                        categorias={proyecto.data.categorias}
+                        herramientas={proyecto.data.herramientas}
+                        urlDemo={proyecto.data.urlDemo}
+                        urlCodigo={proyecto.data.urlCodigo}
+                        url={`/proyectos/${proyecto.id}`}
+                    />
+                </div>
+            ))}
+        </div>
+    </section>
+)}

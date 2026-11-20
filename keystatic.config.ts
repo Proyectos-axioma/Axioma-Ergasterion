@@ -13,48 +13,49 @@ export default config({
         kind: 'local',
       },
     collections: {
-// --- COLECCIÓN DE PRODUCTOS ---
-        productos: collection({
-            label: 'Productos',
-            slugField: 'nombre', // El nombre del archivo se generará a partir del nombre del producto
-            path: 'src/content/productos/*',
+// --- COLECCIÓN DE PROYECTOS (PORTFOLIO) ---
+        proyectos: collection({
+            label: 'Proyectos',
+            slugField: 'nombre', // El nombre del archivo se generará a partir del nombre del proyecto
+            path: 'src/content/proyectos/*',
             format: { contentField: 'content' }, // Separa el frontmatter del contenido Markdown
             schema: {
-                nombre: fields.slug({ name: { label: 'Nombre del Producto' } }),
-                descripcion: fields.text({ label: 'Descripción corta', multiline: true }),
-                precio: fields.number({ label: 'Precio original ($)' }),
-                precioDescuento: fields.number({ label: 'Precio de oferta (Dejar vacío si no aplica)' }),
+                nombre: fields.slug({ name: { label: 'Nombre del Proyecto' } }),
+                descripcion: fields.text({ label: 'Descripción corta (Resumen para tarjetas)', multiline: true }),
+                cliente: fields.text({ label: 'Cliente / Contexto (Opcional, ej. Proyecto Personal o Nombre de Empresa)' }),
+                fecha: fields.date({ label: 'Fecha de realización (Opcional)' }),
                 categorias: fields.array(
                     fields.text({ label: 'Categoría' }),
-                    { label: 'Categorías', itemLabel: props => props.value }
+                    { label: 'Categorías (ej. Desarrollo Web, Diseño UI/UX, Arquitectura)', itemLabel: props => props.value }
                 ),
-                subcategorias: fields.array(
-                    fields.text({ label: 'Subcategoría' }),
-                    { label: 'Subcategorías', itemLabel: props => props.value }
+                herramientas: fields.array(
+                    fields.text({ label: 'Herramienta / Tecnología' }),
+                    { label: 'Herramientas, Tecnologías o Disciplinas (ej. Astro, Figma, Blender)', itemLabel: props => props.value }
                 ),
 // Keystatic guardará las imágenes directamente en tu carpeta de assets
                 imagenPrincipal: fields.image({
-                    label: 'Imagen Principal',
-                    directory: 'src/assets/productos',
-                    publicPath: '../../assets/productos/'
+                    label: 'Imagen Principal / Portada',
+                    directory: 'src/assets/proyectos',
+                    publicPath: '../../assets/proyectos/'
                 }),
                 imagenesSecundarias: fields.array(
                     fields.image({
-                    label: 'Imagen',
-                    directory: 'src/assets/productos',
-                    publicPath: '../../assets/productos/'
-                }),
-                { label: 'Galería Secundaria (Máximo 5 fotos)' }
+                        label: 'Imagen',
+                        directory: 'src/assets/proyectos',
+                        publicPath: '../../assets/proyectos/'
+                    }),
+                    { label: 'Galería Secundaria (Máximo 5 fotos)' }
                 ),
-                disponibilidad: fields.checkbox({ label: '¿Hay stock disponible?', defaultValue: true }),
-                destacado: fields.checkbox({ label: '¿Mostrar en el Hero de la portada?', defaultValue: false }),
-        // Este es el campo grande de texto donde el cliente puede escribir el detalle usando negritas, listas, etc.
+                urlDemo: fields.text({ label: 'URL de Demo / Proyecto en vivo (Opcional)' }),
+                urlCodigo: fields.text({ label: 'URL de Código Fuente / Repositorio (Opcional)' }),
+                destacado: fields.checkbox({ label: '¿Destacar en la página de inicio?', defaultValue: false }),
+// Este es el campo grande de texto donde el cliente puede escribir el caso de estudio usando negritas, listas, etc.
                 content: fields.mdx({
-                    label: 'Detalles completos del producto',
+                    label: 'Caso de estudio / Detalles completos del proyecto',
                     options: {
                         image: {
-                            directory: 'src/assets/productos',
-                            publicPath: '../../assets/productos/'
+                            directory: 'src/assets/proyectos',
+                            publicPath: '../../assets/proyectos/'
                         }
                     }
                 }),

@@ -1,0 +1,53 @@
+---
+import { Icon } from "astro-icon/components";
+import { SITE_TITLE } from "../consts";
+---
+<section id="sobre-mi" class="container mx-auto px-4 max-w-6xl scroll-mt-20">
+    <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-extrabold mb-4">Sobre Mí / Estudio</h2>
+        <p class="text-lg opacity-70 max-w-2xl mx-auto">
+            Conoce la trayectoria, filosofía de trabajo y los pilares detrás de cada proyecto en {SITE_TITLE}.
+        </p>
+    </div>
+    <div class="flex flex-col md:flex-row items-center gap-12 mb-16">
+        <div class="w-full md:w-1/2">
+            <div class="w-full aspect-[4/3] bg-base-200 rounded-3xl overflow-hidden shadow-xl flex items-center justify-center border border-base-300">
+                <span class="opacity-50">[Foto de perfil, estudio o espacio de trabajo]</span>
+            </div>
+        </div>
+        <div class="w-full md:w-1/2 prose prose-lg text-base-content">
+            <h3>¿Cuál es nuestro enfoque?</h3>
+            <p>
+                Especializados en <strong>[Tu disciplina, ej: Desarrollo de Software / Diseño UI/UX / Arquitectura / Fotografía]</strong>. Nuestro objetivo es crear soluciones funcionales, estéticas y duraderas que aporten valor real a cada cliente.
+            </p>
+            <p>
+                Cada proyecto se aborda desde la investigación y la estrategia hasta la ejecución cuidando cada detalle técnico y visual.
+            </p>
+        </div>
+    </div>
+<!-- Pilares / Servicios -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div class="bg-base-200 p-8 rounded-2xl border border-base-300">
+            <div class="w-12 h-12 bg-primary/15 text-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Icon name="tabler:award" class="w-7 h-7" />
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Calidad y Detalle</h3>
+            <p class="opacity-70">Estándares rigurosos y acabados profesionales en cada entrega del portafolio.</p>
+        </div>
+        <div class="bg-base-200 p-8 rounded-2xl border border-base-300">
+            <div class="w-12 h-12 bg-primary/15 text-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Icon name="tabler:bulb" class="w-7 h-7" />
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Soluciones a Medida</h3>
+            <p class="opacity-70">Adaptación total a las necesidades, objetivos e identidad de cada proyecto o cliente.</p>
+        </div>
+        <div class="bg-base-200 p-8 rounded-2xl border border-base-300">
+            <div class="w-12 h-12 bg-primary/15 text-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Icon name="tabler:rocket" class="w-7 h-7" />
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Innovación Continua</h3>
+            <p class="opacity-70">Uso de las mejores herramientas, metodologías y tendencias actuales del sector.</p>
+        </div>
+    </div>
+</section>
+<div class="divider" />

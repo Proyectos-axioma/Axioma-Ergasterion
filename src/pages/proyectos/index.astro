@@ -1,0 +1,189 @@
+---
+// Página de todos los proyectos del portfolio
+import Layout from '../../layouts/Layout.astro';
+import ProyectoCard from '../../components/ProyectoCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE_TITLE } from '../../consts';
+import { Icon } from 'astro-icon/components';
+
+const proyectos = await getCollection('proyectos');
+
+// Extraemos Categorías y Herramientas/Disciplinas
+const categoriasMap = new Map();
+const herramientasMap = new Map();
+
+proyectos.forEach((p) => {
+    p.data.categorias.forEach((cat: string) => {
+        categoriasMap.set(cat, (categoriasMap.get(cat) || 0) + 1);
+    });
+    if (p.data.herramientas) {
+        p.data.herramientas.forEach((h: string) => {
+            herramientasMap.set(h, (herramientasMap.get(h) || 0) + 1);
+        });
+    }
+});
+
+const categoriasUnicas = Array.from(categoriasMap.entries()).sort();
+const herramientasUnicas = Array.from(herramientasMap.entries()).sort();
+---
+<Layout title={`Proyectos | ${SITE_TITLE}`} description="Explora nuestro portafolio de proyectos y casos de estudio.">
+    <main class="container mx-auto px-4 py-8">
+        <div class="mb-10 text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3">Portafolio de Proyectos</h1>
+            <p class="text-lg text-base-content/70 max-w-2xl">
+                Explora una selección de trabajos, casos de estudio y soluciones desarrolladas.
+            </p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- BARRA LATERAL -->
+            <aside class="w-full md:w-64 flex-shrink-0">
+                <!-- Botón de filtros exclusivo para móviles -->
+                <button id="btn-filtros" class="btn btn-neutral w-full mb-6 md:hidden flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                        <Icon name="tabler:filter-search" class="w-6 h-6 stroke-2" />
+                        Filtrar Proyectos
+                    </span>
+                    <Icon id="icono-filtros" name="tabler:arrow-badge-down-filled" class="w-6 h-6 stroke-2 transition-transform duration-300" />
+                </button>
+
+                <!-- Contenedor que se oculta en móvil (hidden) y siempre se ve en PC (md:block) -->
+                <div id="menu-filtros" class="hidden md:block">
+                    <h2 class="text-xl font-bold mb-4 border-b border-base-300 pb-2 hidden md:block">Categorías</h2>
+                    <ul class="menu bg-base-200 w-full rounded-box mb-6">
+                        <li>
+                            <a href="/proyectos" class="flex justify-between hover:text-primary">
+                                <span>Todos los proyectos</span>
+                                <span class="badge badge-sm">{proyectos.length}</span>
+                            </a>
+                        </li>
+                        {categoriasUnicas.map(([cat, count]) => (
+                            <li>
+                                <a href={`/proyectos?categoria=${encodeURIComponent(cat)}`} class="flex justify-between hover:text-primary">
+                                    <span>{cat}</span>
+                                    <span class="badge badge-sm badge-ghost">{count}</span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <!-- Bloque de Herramientas / Tecnologías -->
+                    {herramientasUnicas.length > 0 && (
+                        <>
+                            <h2 class="text-xl font-bold mb-4 border-b border-base-300 pb-2 hidden md:block">Herramientas / Stack</h2>
+                            <ul class="menu bg-base-200 w-full rounded-box mb-6">
+                                {herramientasUnicas.map(([herramienta, count]) => (
+                                    <li>
+                                        <a href={`/proyectos?herramienta=${encodeURIComponent(herramienta)}`} class="flex justify-between hover:text-primary">
+                                            <span>{herramienta}</span>
+                                            <span class="badge badge-sm badge-ghost">{count}</span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )}
+                </div>
+            </aside>
+
+            <!-- ÁREA PRINCIPAL -->
+            <div class="flex-1">
+                <div id="info-busqueda" class="hidden mb-6 text-lg">
+                    Mostrando resultados para: <span id="termino-busqueda" class="font-bold text-primary"></span>
+                </div>
+                <div id="grid-proyectos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {proyectos.map((proyecto: any) => (
+                        <div
+                            class="proyecto-item transition-all duration-300"
+                            data-nombre={proyecto.data.nombre}
+                            data-descripcion={proyecto.data.descripcion}
+                            data-categorias={JSON.stringify(proyecto.data.categorias)}
+                            data-herramientas={JSON.stringify(proyecto.data.herramientas || [])}
+                        >
+                            <ProyectoCard
+                                titulo={proyecto.data.nombre}
+                                descripcion={proyecto.data.descripcion}
+                                imagen={proyecto.data.imagenPrincipal}
+                                categorias={proyecto.data.categorias}
+                                herramientas={proyecto.data.herramientas}
+                                urlDemo={proyecto.data.urlDemo}
+                                urlCodigo={proyecto.data.urlCodigo}
+                                url={`/proyectos/${proyecto.id}`}
+                            />
+                        </div>
+                    ))}
+                </div>
+                <div id="sin-resultados" class="hidden text-center py-20">
+                    <h3 class="text-2xl font-bold opacity-50">No se encontraron proyectos.</h3>
+                    <p class="opacity-50 mt-2">Intenta con otra palabra, categoría o herramienta.</p>
+                    <a href="/proyectos" class="btn btn-outline mt-6">Ver todos los proyectos</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+        const normalizar = (texto) => {
+            return texto ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+        };
+        const params = new URLSearchParams(window.location.search);
+        const busquedaOriginal = params.get('q');
+        const busquedaNormalizada = normalizar(busquedaOriginal);
+        const categoriaFiltro = params.get('categoria');
+        const herramientaFiltro = params.get('herramienta');
+        const proyectos = document.querySelectorAll('.proyecto-item');
+        const infoBusqueda = document.getElementById('info-busqueda');
+        const terminoBusqueda = document.getElementById('termino-busqueda');
+        const sinResultados = document.getElementById('sin-resultados');
+        let visibles = 0;
+
+        // --- LÓGICA DEL BOTÓN DE FILTROS EN MÓVIL ---
+        const btnFiltros = document.getElementById('btn-filtros');
+        const menuFiltros = document.getElementById('menu-filtros');
+        const iconoFiltros = document.getElementById('icono-filtros');
+        if (btnFiltros && menuFiltros) {
+            btnFiltros.addEventListener('click', () => {
+                menuFiltros.classList.toggle('hidden');
+                if (iconoFiltros) iconoFiltros.classList.toggle('rotate-180');
+            });
+        }
+
+        if (busquedaOriginal || categoriaFiltro || herramientaFiltro) {
+            infoBusqueda.classList.remove('hidden');
+            terminoBusqueda.textContent = busquedaOriginal ? `"${busquedaOriginal}"` : (categoriaFiltro || herramientaFiltro);
+        }
+
+        proyectos.forEach(proyecto => {
+            const nombreProyecto = normalizar(proyecto.getAttribute('data-nombre'));
+            const descripcionProyecto = normalizar(proyecto.getAttribute('data-descripcion'));
+            const categorias = JSON.parse(proyecto.getAttribute('data-categorias') || '[]');
+            const herramientas = JSON.parse(proyecto.getAttribute('data-herramientas') || '[]');
+
+            let coincideBusqueda = true;
+            let coincideCategoria = true;
+            let coincideHerramienta = true;
+
+            if (busquedaNormalizada) {
+                coincideBusqueda = nombreProyecto.includes(busquedaNormalizada) || descripcionProyecto.includes(busquedaNormalizada);
+            }
+            if (categoriaFiltro) {
+                coincideCategoria = categorias.includes(categoriaFiltro);
+            }
+            if (herramientaFiltro) {
+                coincideHerramienta = herramientas.includes(herramientaFiltro);
+            }
+
+            if (coincideBusqueda && coincideCategoria && coincideHerramienta) {
+                proyecto.style.display = 'block';
+                visibles++;
+            } else {
+                proyecto.style.display = 'none';
+            }
+        });
+
+        if (visibles === 0) {
+            sinResultados.classList.remove('hidden');
+        }
+    });
+</script>

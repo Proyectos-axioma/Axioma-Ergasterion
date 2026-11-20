@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: corporate --default, business --prefersdark;
+  themes: winter --default, dark --prefersdark;
 }
 @plugin "@tailwindcss/typography";
 /*

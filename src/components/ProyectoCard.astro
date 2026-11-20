@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+    titulo: string;
+    descripcion: string;
+    imagen: any;
+    categorias?: string[];
+    herramientas?: string[];
+    url: string;
+    urlDemo?: string | null;
+    urlCodigo?: string | null;
+}
+
+const {
+    titulo,
+    descripcion,
+    imagen,
+    categorias = [],
+    herramientas = [],
+    url,
+    urlDemo,
+    urlCodigo,
+} = Astro.props;
+---
+<div class="card bg-base-100 w-full h-full shadow-xl border border-base-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col">
+    <figure class="relative overflow-hidden">
+        <a href={url} class="w-full block">
+            <Image
+                src={imagen}
+                alt={titulo}
+                width={600}
+                height={400}
+                class="h-52 w-full object-cover transition-transform duration-500 hover:scale-105"
+            />
+        </a>
+        {categorias.length > 0 && (
+            <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                {categorias.slice(0, 2).map((cat) => (
+                    <span class="badge badge-primary badge-sm shadow-md">{cat}</span>
+                ))}
+            </div>
+        )}
+    </figure>
+    <div class="card-body flex-1 flex flex-col justify-between p-5">
+        <div>
+            <h2 class="card-title text-lg sm:text-xl font-bold">
+                <a href={url} class="hover:text-primary transition-colors">{titulo}</a>
+            </h2>
+            <p class="text-sm text-base-content/70 mt-2 line-clamp-2">
+                {descripcion}
+            </p>
+            {herramientas && herramientas.length > 0 && (
+                <div class="flex flex-wrap gap-1.5 mt-4">
+                    {herramientas.slice(0, 4).map((item) => (
+                        <span class="badge badge-outline badge-xs opacity-80">{item}</span>
+                    ))}
+                    {herramientas.length > 4 && (
+                        <span class="badge badge-ghost badge-xs">+{herramientas.length - 4}</span>
+                    )}
+                </div>
+            )}
+        </div>
+
+        <div class="card-actions justify-end items-center gap-2 mt-5 pt-3 border-t border-base-200">
+            {urlCodigo && (
+                <a
+                    href={urlCodigo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-ghost btn-sm btn-square"
+                    title="Ver código fuente"
+                    aria-label="Ver código fuente"
+                >
+                    <Icon name="tabler:brand-github" class="w-5 h-5" />
+                </a>
+            )}
+            {urlDemo && (
+                <a
+                    href={urlDemo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-ghost btn-sm btn-square"
+                    title="Ver demo en vivo"
+                    aria-label="Ver demo en vivo"
+                >
+                    <Icon name="tabler:external-link" class="w-5 h-5" />
+                </a>
+            )}
+            <a href={url} class="btn btn-primary btn-sm">
+                Ver proyecto
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+---
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+import ProyectoCard from "../components/ProyectoCard.astro";
+
+const todosLosProyectos = await getCollection("proyectos");
+const proyectosDestacados = todosLosProyectos
+    .filter((p) => p.data.destacado)
+    .slice(0, 3);
+---
+<section id="proyectos-destacados" class="container mx-auto px-4 max-w-6xl">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-2">Proyectos Destacados</h2>
+            <p class="text-base-content/70">Una muestra seleccionada de los trabajos más representativos.</p>
+        </div>
+        <a href="/proyectos" class="btn btn-ghost gap-2 self-start sm:self-auto">
+            Ver todos los proyectos
+            <Icon name="tabler:arrow-right" class="w-5 h-5" />
+        </a>
+    </div>
+    {proyectosDestacados.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {proyectosDestacados.map((proyecto) => (
+                <ProyectoCard
+                    titulo={proyecto.data.nombre}
+                    descripcion={proyecto.data.descripcion}
+                    imagen={proyecto.data.imagenPrincipal}
+                    categorias={proyecto.data.categorias}
+                    herramientas={proyecto.data.herramientas}
+                    urlDemo={proyecto.data.urlDemo}
+                    urlCodigo={proyecto.data.urlCodigo}
+                    url={`/proyectos/${proyecto.id}`}
+                />
+            ))}
+        </div>
+    ) : (
+        <div class="text-center py-12 bg-base-200 rounded-3xl">
+            <p class="opacity-70">Aún no hay proyectos marcados como destacados.</p>
+            <a href="/proyectos" class="btn btn-primary btn-sm mt-4">Ir al catálogo completo</a>
+        </div>
+    )}
+</section>
+<div class="divider" />
