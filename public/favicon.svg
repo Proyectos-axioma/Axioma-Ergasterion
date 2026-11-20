@@ -1,47 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Degradado de fondo (Modo oscuro elegante - Tailwind Slate) -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0F172A" />
-      <stop offset="100%" stop-color="#1E293B" />
+    <!-- Fondo oscuro profundo (combinando con el modo oscuro de Ergasterion) -->
+    <linearGradient id="bgErgasterion" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B2E" />
+      <stop offset="100%" stop-color="#11121A" />
     </linearGradient>
-    
-    <!-- Degradado de acento (Azul/Cian vibrante - Tailwind Sky/Indigo) -->
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38BDF8" />
-      <stop offset="100%" stop-color="#6366F1" />
+
+    <!-- Degradado principal: Índigo -> Magenta -> Cian -->
+    <linearGradient id="ergGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="50%" stop-color="#EC4899" />
+      <stop offset="100%" stop-color="#14B8A6" />
+    </linearGradient>
+
+    <!-- Degradado claro para el asa y el broche -->
+    <linearGradient id="lightMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#CBD5E1" />
     </linearGradient>
   </defs>
-  
-  <!-- Contenedor principal redondeado tipo App de iOS -->
-  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
-  
-  <!-- Sombra base inferior para dar profundidad -->
-  <ellipse cx="256" cy="450" rx="140" ry="12" fill="#000000" opacity="0.3" />
 
-  <!-- TECHO DEL ÁGORA (Formando la punta de la letra 'A') -->
-  <path d="M256 100 L110 250 H402 Z" fill="url(#accentGrad)" />
-  <!-- Detalle de luz volumétrica en el techo (Mitad derecha más clara) -->
-  <path d="M256 100 L256 250 H402 Z" fill="#FFFFFF" opacity="0.15" />
-  
-  <!-- Cornisa del techo -->
-  <rect x="90" y="250" width="332" height="24" rx="8" fill="#F1F5F9" />
-  
-  <!-- PILARES DEL MERCADO (Las piernas de la letra 'A') -->
-  <!-- Pilar Izquierdo -->
-  <rect x="140" y="274" width="48" height="136" fill="#E2E8F0" />
-  <rect x="164" y="274" width="24" height="136" fill="#94A3B8" opacity="0.2" /> <!-- Sombreado del pilar -->
-  
-  <!-- Pilar Derecho -->
-  <rect x="324" y="274" width="48" height="136" fill="#E2E8F0" />
-  <rect x="348" y="274" width="24" height="136" fill="#94A3B8" opacity="0.2" /> <!-- Sombreado del pilar -->
+  <!-- Contenedor principal redondeado -->
+  <rect width="512" height="512" rx="112" fill="url(#bgErgasterion)" />
 
-  <!-- TRAVESAÑO (El centro de la letra 'A' y mostrador del mercado) -->
-  <rect x="140" y="324" width="232" height="36" rx="12" fill="url(#accentGrad)" />
-  <!-- Brillo sutil en el mostrador -->
-  <rect x="140" y="324" width="232" height="12" rx="6" fill="#FFFFFF" opacity="0.2" />
+  <!-- Sombra base inferior -->
+  <ellipse cx="256" cy="436" rx="145" ry="12" fill="#000000" opacity="0.4" />
 
-  <!-- ESCALONES (La base del Ágora) -->
-  <rect x="110" y="410" width="292" height="24" rx="8" fill="#F1F5F9" />
-  <rect x="80" y="434" width="352" height="24" rx="12" fill="#CBD5E1" />
+  <!-- Destello minimalista (referencia a la insignia de proyectos) -->
+  <path d="M402 82 L408 100 L426 106 L408 112 L402 130 L396 112 L378 106 L396 100 Z" fill="#2DD4BF" />
+
+  <!-- ASA DEL MALETÍN -->
+  <path d="M196 164 V130 C196 114, 208 102, 224 102 H288 C304 102, 316 114, 316 130 V164" fill="none" stroke="url(#lightMetal)" stroke-width="24" stroke-linecap="round" />
+
+  <!-- CUERPO PRINCIPAL DEL MALETÍN -->
+  <rect x="96" y="160" width="320" height="236" rx="36" fill="url(#ergGrad)" />
+
+  <!-- Solapa superior (capa translúcida para dar volumen) -->
+  <path d="M96 196 C96 176, 112 160, 132 160 H380 C400 160, 416 176, 416 196 V244 C416 264, 400 280, 380 280 H132 C112 280, 96 264, 96 244 Z" fill="#FFFFFF" opacity="0.16" />
+
+  <!-- Luz volumétrica en la mitad derecha (mismo estilo que Ágora y Kapileio) -->
+  <path d="M256 160 H380 C400 160, 416 176, 416 196 V360 C416 380, 400 396, 380 396 H256 Z" fill="#FFFFFF" opacity="0.10" />
+
+  <!-- BROCHE CENTRAL -->
+  <rect x="224" y="252" width="64" height="48" rx="14" fill="url(#lightMetal)" />
+  <rect x="242" y="268" width="28" height="16" rx="5" fill="#1E1B2E" opacity="0.85" />
 </svg>
