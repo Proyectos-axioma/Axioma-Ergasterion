@@ -20,31 +20,58 @@ export default config({
             path: 'src/content/proyectos/*',
             format: { contentField: 'content' }, // Separa el frontmatter del contenido Markdown
             schema: {
-                nombre: fields.slug({ name: { label: 'Nombre del Proyecto' } }),
-                descripcion: fields.text({ label: 'Descripción corta (Resumen para tarjetas)', multiline: true }),
+                nombre: fields.slug({
+                    name: {
+                        label: 'Nombre del Proyecto (Obligatorio)',
+                        validation: { isRequired: true, length: { min: 1 } },
+                    },
+                }),
+                descripcion: fields.text({
+                    label: 'Descripción corta / Resumen para tarjetas (Obligatorio)',
+                    multiline: true,
+                    validation: { isRequired: true, length: { min: 1 } },
+                }),
                 cliente: fields.text({ label: 'Cliente / Contexto (Opcional, ej. Proyecto Personal o Nombre de Empresa)' }),
                 fecha: fields.date({ label: 'Fecha de realización (Opcional)' }),
                 categorias: fields.array(
-                    fields.text({ label: 'Categoría' }),
-                    { label: 'Categorías (ej. Desarrollo Web, Diseño UI/UX, Arquitectura)', itemLabel: props => props.value }
+                    fields.text({
+                        label: 'Categoría',
+                        validation: { isRequired: true, length: { min: 1 } },
+                    }),
+                    {
+                        label: 'Categorías (Obligatorio al menos 1 - ej. Desarrollo Web, Diseño UI/UX)',
+                        itemLabel: props => props.value || 'Nueva categoría',
+                        validation: { length: { min: 1 } },
+                    }
                 ),
                 herramientas: fields.array(
-                    fields.text({ label: 'Herramienta / Tecnología' }),
-                    { label: 'Herramientas, Tecnologías o Disciplinas (ej. Astro, Figma, Blender)', itemLabel: props => props.value }
+                    fields.text({
+                        label: 'Herramienta / Tecnología',
+                        validation: { isRequired: true, length: { min: 1 } },
+                    }),
+                    {
+                        label: 'Herramientas, Tecnologías o Disciplinas (Opcional - ej. Astro, Figma, Blender)',
+                        itemLabel: props => props.value || 'Nueva herramienta',
+                    }
                 ),
 // Keystatic guardará las imágenes directamente en tu carpeta de assets
                 imagenPrincipal: fields.image({
-                    label: 'Imagen Principal / Portada',
+                    label: 'Imagen Principal / Portada (Obligatorio)',
                     directory: 'src/assets/proyectos',
-                    publicPath: '../../assets/proyectos/'
+                    publicPath: '../../assets/proyectos/',
+                    validation: { isRequired: true },
                 }),
                 imagenesSecundarias: fields.array(
                     fields.image({
                         label: 'Imagen',
                         directory: 'src/assets/proyectos',
-                        publicPath: '../../assets/proyectos/'
+                        publicPath: '../../assets/proyectos/',
+                        validation: { isRequired: true },
                     }),
-                    { label: 'Galería Secundaria (Máximo 5 fotos)' }
+                    {
+                        label: 'Galería Secundaria (Opcional - Máximo 5 fotos)',
+                        validation: { length: { max: 5 } },
+                    }
                 ),
                 urlDemo: fields.text({ label: 'URL de Demo / Proyecto en vivo (Opcional)' }),
                 urlCodigo: fields.text({ label: 'URL de Código Fuente / Repositorio (Opcional)' }),
@@ -68,29 +95,55 @@ export default config({
             path: 'src/content/blog/*',
             format: { contentField: 'content' },
             schema: {
-                title: fields.slug({ name: { label: 'Título del artículo' } }),
+                title: fields.slug({
+                    name: {
+                        label: 'Título del artículo (Obligatorio)',
+                        validation: { isRequired: true, length: { min: 1 } },
+                    },
+                }),
                 seoTitle: fields.text({ label: 'Título SEO (Opcional - para Google)' }),
-                description: fields.text({ label: 'Resumen (Descripción para tarjetas)', multiline: true }),
-                pubDate: fields.date({ label: 'Fecha de publicación' }),
+                description: fields.text({
+                    label: 'Resumen / Descripción para tarjetas (Obligatorio)',
+                    multiline: true,
+                    validation: { isRequired: true, length: { min: 1 } },
+                }),
+                pubDate: fields.date({
+                    label: 'Fecha de publicación (Obligatorio)',
+                    defaultValue: { kind: 'today' },
+                    validation: { isRequired: true },
+                }),
 
                 updatedDate: fields.date({ label: 'Fecha de actualización (Opcional)' }),
                 heroImage: fields.image({
-                    label: 'Imagen de Portada',
+                    label: 'Imagen de Portada (Opcional)',
                     directory: 'src/assets/blog',
                     publicPath: '../../assets/blog/'
                 }),
             
-                author: fields.text({ label: 'Autor', defaultValue: SITE_PROPIETARIO }),
-                categoria: fields.text({ label: 'Categoría' }),
+                author: fields.text({
+                    label: 'Autor (Obligatorio)',
+                    defaultValue: SITE_PROPIETARIO,
+                    validation: { isRequired: true, length: { min: 1 } },
+                }),
+                categoria: fields.text({ label: 'Categoría (Opcional)' }),
             
                 tags: fields.array(
-                    fields.text({ label: 'Etiqueta' }),
-                    { label: 'Etiquetas', itemLabel: props => props.value }
+                    fields.text({
+                        label: 'Etiqueta',
+                        validation: { isRequired: true, length: { min: 1 } },
+                    }),
+                    {
+                        label: 'Etiquetas (Opcional)',
+                        itemLabel: props => props.value || 'Nueva etiqueta',
+                    }
                 ),
             
                 draft: fields.checkbox({ label: 'Borrador (Ocultar al público)', defaultValue: false }),
                 destacado: fields.checkbox({ label: '¿Fijar en portada del blog?', defaultValue: false }),
-                tiempoLectura: fields.number({ label: 'Tiempo estimado de lectura (minutos)' }),
+                tiempoLectura: fields.number({
+                    label: 'Tiempo estimado de lectura en minutos (Opcional)',
+                    validation: { min: 1 },
+                }),
 
                 content: fields.mdx({
                     label: 'Contenido del artículo',

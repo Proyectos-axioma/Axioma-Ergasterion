@@ -2,65 +2,127 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { SITE_PROPIETARIO } from './consts';
+import PlaceholderImage from './assets/Placeholder.svg';
+
+// Helpers a prueba de errores de usuario o valores vacíos/null generados por CMS (Keystatic)
+const limpiarTextoOpcional = (val: unknown) =>
+	typeof val === 'string' && val.trim() === '' ? undefined : val === null ? undefined : val;
+
+const textoOpcional = z.preprocess(limpiarTextoOpcional, z.string().optional());
+const urlOpcional = z.preprocess(limpiarTextoOpcional, z.string().url().optional());
+const fechaOpcional = z.preprocess(
+	(val) => (val === null || val === '' ? undefined : val),
+	z.coerce.date().optional()
+);
+const fechaConFallbackHoy = z.preprocess(
+	(val) => (val === null || val === '' || val === undefined ? new Date() : val),
+	z.coerce.date()
+);
+const numeroPositivoOpcional = z.preprocess(
+	(val) => (val === null || val === '' ? undefined : val),
+	z.number().positive().optional()
+);
+const listaTextosLimpia = z.preprocess(
+	(val) =>
+		Array.isArray(val)
+			? val.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+			: [],
+	z.array(z.string()).default([])
+);
 
 const blog = defineCollection({
 	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>
 		z.object({
-// LO OBLIGATORIO (Lo mínimo para que no explote)
-			title: z.string(),
-			description: z.string(),
-			pubDate: z.coerce.date(),
-// LO OPCIONAL (Aquí existe lo que no ocupamos, pero que debería curbrir casi todas las necesidades)
+// LO OBLIGATORIO (Con respaldos seguros por si alguien edita el MDX a mano y deja algo vacío)
+			title: z.preprocess(
+				(val) => (typeof val === 'string' && val.trim() !== '' ? val : 'Artículo sin título'),
+				z.string()
+			),
+			description: z.preprocess(
+				(val) => (typeof val === 'string' ? val : ''),
+				z.string().default('')
+			),
+			pubDate: fechaConFallbackHoy,
+
+// LO OPCIONAL (Limpia null o cadenas vacías "" sin romper el build)
 // Fechas y Estado
-			updatedDate: z.preprocess((val) => (val === null || val === '' ? undefined : val), z.coerce.date().optional()),
-			draft: z.boolean().default(false), // Ocultar borradores al público
-			destacado: z.boolean().default(false), // Fijar en portada del blog
-			tiempoLectura: z.number().nullable().optional(), // Tiempo estimado de lectura (minutos)
+			updatedDate: fechaOpcional,
+			draft: z.preprocess((val) => Boolean(val), z.boolean().default(false)), // Ocultar borradores al público
+			destacado: z.preprocess((val) => Boolean(val), z.boolean().default(false)), // Fijar en portada del blog
+			tiempoLectura: numeroPositivoOpcional, // Tiempo estimado de lectura (minutos)
 
 // Multimedia
-			heroImage: z.optional(image()), // Imagen ancha de cabecera
-			thumbnail: z.optional(image()), // Imagen cuadrada para la tarjeta (si no hay, usas heroImage)
-			videoUrl: z.string().url().optional(), // Por si quieren clavar un video de YouTube
+			heroImage: z.preprocess(limpiarTextoOpcional, image().optional()), // Imagen ancha de cabecera
+			thumbnail: z.preprocess(limpiarTextoOpcional, image().optional()), // Imagen cuadrada para la tarjeta (si no hay, usas heroImage)
+			videoUrl: urlOpcional, // Por si quieren clavar un video de YouTube
 
 // Taxonomía (Filtros)
-			categoria: z.string().nullable().optional(),
-			categories: z.array(z.string()).optional(),
-			tags: z.array(z.string()).default([]),
+			categoria: textoOpcional,
+			categories: listaTextosLimpia,
+			tags: listaTextosLimpia,
 
-// Autoría (Por si el cliente pone a 3 personas distintas a escribir)
-			author: z.string().default(SITE_PROPIETARIO),
-			authorRole: z.string().optional(),
-			authorImage: z.optional(image()),
+// Autoría (Si el usuario borra el autor en Keystatic, regresa automáticamente a SITE_PROPIETARIO)
+			author: z.preprocess(
+				(val) => (typeof val === 'string' && val.trim() !== '' ? val : SITE_PROPIETARIO),
+				z.string().default(SITE_PROPIETARIO)
+			),
+			authorRole: textoOpcional,
+			authorImage: z.preprocess(limpiarTextoOpcional, image().optional()),
 
 // SEO
-			seoTitle: z.string().nullable().optional(),
-			metaTitle: z.string().max(70).optional(), // Título optimizado solo para Google
-			metaDescription: z.string().max(160).optional(),
-			canonicalURL: z.string().url().optional(), // Para evitar contenido duplicado
+			seoTitle: textoOpcional,
+			metaTitle: z.preprocess(limpiarTextoOpcional, z.string().max(70).optional()), // Título optimizado solo para Google
+			metaDescription: z.preprocess(limpiarTextoOpcional, z.string().max(160).optional()),
+			canonicalURL: urlOpcional, // Para evitar contenido duplicado
 
 // Control de Interfaz
-			showToc: z.boolean().default(true), // ¿Mostrar tabla de contenidos?
-			relatedPosts: z.array(z.string()).optional(), // Slugs de otros posts para "Te podría interesar"
+			showToc: z.preprocess((val) => (val === null || val === undefined ? true : Boolean(val)), z.boolean().default(true)), // ¿Mostrar tabla de contenidos?
+			relatedPosts: listaTextosLimpia, // Slugs de otros posts para "Te podría interesar"
 		}),
 });
+
 // Valores para los proyectos del portfolio
 const proyectos = defineCollection({
 	loader: glob({ base: './src/content/proyectos', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>
 		z.object({
-			nombre: z.string(),
-			descripcion: z.string(),
-			cliente: z.string().nullable().optional(),
-			fecha: z.preprocess((val) => (val === null || val === '' ? undefined : val), z.coerce.date().optional()),
-			categorias: z.array(z.string()),
-			herramientas: z.array(z.string()).optional(),
-			imagenPrincipal: image(),
-// Validamos que sea un arreglo de imágenes con un máximo de 5
-			imagenesSecundarias: z.array(image()).max(5).optional(),
-			urlDemo: z.string().nullable().optional(),
-			urlCodigo: z.string().nullable().optional(),
-			destacado: z.boolean().default(false),
+			nombre: z.preprocess(
+				(val) => (typeof val === 'string' && val.trim() !== '' ? val : 'Proyecto sin nombre'),
+				z.string()
+			),
+			descripcion: z.preprocess(
+				(val) => (typeof val === 'string' ? val : ''),
+				z.string().default('')
+			),
+			cliente: textoOpcional,
+			fecha: fechaOpcional,
+			categorias: z.preprocess(
+				(val) => {
+					const limpios = Array.isArray(val)
+						? val.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+						: [];
+					return limpios.length > 0 ? limpios : ['General'];
+				},
+				z.array(z.string()).default(['General'])
+			),
+			herramientas: listaTextosLimpia,
+// Si el usuario olvida subir la imagen principal editando a mano, usa Placeholder.svg para que no explote Astro <Image />
+			imagenPrincipal: z.preprocess(
+				(val) => (typeof val === 'string' && val.trim() !== '' ? val : PlaceholderImage),
+				z.union([image(), z.custom<typeof PlaceholderImage>()])
+			),
+// Filtramos elementos vacíos/nulos y recortamos a máximo 5 para que nunca falle la compilación si suben de más
+			imagenesSecundarias: z.preprocess(
+				(val) =>
+					Array.isArray(val)
+						? val.filter((item): item is string => typeof item === 'string' && item.trim().length > 0).slice(0, 5)
+						: undefined,
+				z.array(image()).max(5).optional()
+			),
+			urlDemo: textoOpcional,
+			urlCodigo: textoOpcional,
+			destacado: z.preprocess((val) => Boolean(val), z.boolean().default(false)),
 		}),
 });
 
